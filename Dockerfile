@@ -41,6 +41,13 @@ WORKDIR /home/user
 RUN mkdir -p ~/.config/xfce4/xfconf/xfce-perchannel-xml \
  && cp /etc/xdg/xfce4/panel/default.xml ~/.config/xfce4/xfconf/xfce-perchannel-xml/xfce4-panel.xml
 
+# set up wine
+ENV WINEARCH=win32
+ENV WINEPREFIX=/home/user/.wine32
+RUN mkdir -p $WINEPREFIX
+RUN wine wineboot --init \
+ && wineserver -w
+
 
 ENV VNCRESOLUTION=1920x1080
 
