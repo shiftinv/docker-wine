@@ -1,0 +1,11 @@
+version: '3'
+
+services:
+    main:
+        image: shiftinv/wine-vnc:latest
+        restart: 'no'
+        environment:
+            # VNCPASSWD: '<unset>'
+            VNCRESOLUTION: '1920x1080'
+        ports:
+            - '127.0.0.1:5901:5901'
