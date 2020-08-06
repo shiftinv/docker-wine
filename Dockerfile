@@ -7,7 +7,7 @@ ENV APT_CMD="apt-get -o=Dpkg::Use-Pty=0 -o=Acquire::ForceIPv4=true"
 RUN \
  # install utils
  $APT_CMD update \
- && $APT_CMD install -y wget curl apt-transport-https gnupg nano unzip cabextract \
+ && $APT_CMD install -y wget curl apt-transport-https gnupg nano unzip cabextract p7zip-full winbind \
  \
  # install wine
  && dpkg --add-architecture i386 \
@@ -44,7 +44,6 @@ RUN mkdir -p ~/.config/xfce4/xfconf/xfce-perchannel-xml \
 # set up wine
 ENV WINEARCH=win32
 ENV WINEPREFIX=/home/user/.wine32
-RUN mkdir -p $WINEPREFIX
 RUN wine wineboot --init \
  && wineserver -w
 
