@@ -1,4 +1,5 @@
-FROM shiftinv/wine-vnc:latest
+ARG BASE_TAG=latest
+FROM shiftinv/wine:$BASE_TAG
 
 USER root
 RUN $APT_CMD update \
