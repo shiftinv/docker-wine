@@ -1,0 +1,20 @@
+#!/bin/bash -xe
+
+DOCKER_ARGS=(
+    -f "$DOCKERFILE_PATH"
+)
+for tag in ${DOCKER_TAG//,/ }; do
+    # (<wine_branch>-)?<dotnet_version> | latest
+    if [[ "$tag" != "latest" ]] && [[ ! "$tag" =~ ^(.+-)?([0-9]+)$ ]]; then
+        echo "Invalid tag: $tag" >&2
+        exit 1
+    fi
+
+    DOCKER_ARGS+=(-t "$DOCKER_REPO:$tag")
+    if [[ "$tag" =~ ^((.+)-)?([0-9]+)$ ]]; then
+        [ -n "${BASH_REMATCH[2]}" ] && DOCKER_ARGS+=(--build-arg "WINE_BRANCH=${BASH_REMATCH[2]}")
+        [ -n "${BASH_REMATCH[3]}" ] && DOCKER_ARGS+=(--build-arg "DOTNET_VERSION=${BASH_REMATCH[3]}")
+    fi
+done
+
+docker build "${DOCKER_ARGS[@]}" .

@@ -1,0 +1,15 @@
+#!/bin/bash -xe
+
+DOCKER_ARGS=(
+    -f "$DOCKERFILE_PATH"
+)
+for tag in ${DOCKER_TAG//,/ }; do
+    DOCKER_ARGS+=(-t "$DOCKER_REPO:$tag")
+    case "$tag" in
+        latest) ;;
+        stable|devel|staging) DOCKER_ARGS+=(--build-arg "WINE_BRANCH=$tag");;
+        *) echo "Invalid Wine branch: $tag" >&2; exit 1;;
+    esac
+done
+
+docker build "${DOCKER_ARGS[@]}" .
