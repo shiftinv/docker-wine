@@ -1,5 +1,5 @@
-DOTNET_VERSION = 48
-WINE_BRANCH = staging
+DOTNET_VERSION ?= 48
+WINE_BRANCH ?= staging
 
 _IMAGE_PREFIX = shiftinv/wine
 

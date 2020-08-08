@@ -1,8 +1,8 @@
 version: '3'
 
 services:
-    main:
-        image: shiftinv/wine-vnc:latest
+    vnc:
+        image: shiftinv/wine:vnc
         restart: 'no'
         environment:
             # VNCPASSWD: '<unset>'
