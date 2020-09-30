@@ -12,7 +12,7 @@ for tag in ${DOCKER_TAG//,/ }; do
 
     DOCKER_ARGS+=(-t "$DOCKER_REPO:$tag")
     if [[ "$tag" =~ ^((.+)-)?([0-9]+)$ ]]; then
-        [ -n "${BASH_REMATCH[2]}" ] && DOCKER_ARGS+=(--build-arg "WINE_BRANCH=${BASH_REMATCH[2]}")
+        [ -n "${BASH_REMATCH[2]}" ] && DOCKER_ARGS+=(--build-arg "BASE_TAG=${BASH_REMATCH[2]}")
         [ -n "${BASH_REMATCH[3]}" ] && DOCKER_ARGS+=(--build-arg "DOTNET_VERSION=${BASH_REMATCH[3]}")
     fi
 done
