@@ -20,6 +20,9 @@ chmod +x ~/.vnc/xstartup
 touch ~/.Xauthority
 rm -rfv /tmp/.X*-lock /tmp/.X11-unix || true
 
-# start vncserver
+# start VNC/noVNC
 vncserver "${VNCARGS[@]}"
-tail -F ~/.vnc/*.log
+"$NOVNCHOME/utils/websockify/run" --daemon --web "$NOVNCHOME" --log-file ~/websockify.log 8081 localhost:5901
+
+tail -F ~/websockify.log | sed 's/^/websockify | /' &
+tail -F ~/.vnc/*.log     | sed 's/^/vncserver  | /'
