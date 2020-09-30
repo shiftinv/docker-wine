@@ -12,5 +12,6 @@ ARG DOTNET_VERSION
 RUN [ -n "$DOTNET_VERSION" ] || { echo "\$DOTNET_VERSION is not set" >&2; exit 1; }
 RUN export DISPLAY=:0 \
  && (Xvfb ${DISPLAY} &) \
- && winetricks -q --verify dotnet${DOTNET_VERSION} \
+ # --force: https://bugs.winehq.org/show_bug.cgi?id=49897
+ && winetricks -q --verify --force dotnet${DOTNET_VERSION} \
  && rm -rf ~/.cache/winetricks
