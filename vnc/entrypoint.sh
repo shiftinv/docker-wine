@@ -1,14 +1,16 @@
 #!/bin/bash -xe
 
-if [ -z "$VNCPASSWD" ] || [ "$VNCPASSWD" == "<unset>" ]; then
-    echo "Error: \$VNCPASSWD not set"
-    exit 1
-fi
 mkdir -p ~/.vnc
 
+VNCARGS=(-alwaysshared -depth 24 -geometry "$VNCRESOLUTION")
+
 # set vnc password
-echo "$VNCPASSWD" | vncpasswd -f > ~/.vnc/passwd
-chmod 600 ~/.vnc/passwd
+if [ -n "$VNCPASSWD" ]; then
+    echo "$VNCPASSWD" | vncpasswd -f > ~/.vnc/passwd
+    chmod 600 ~/.vnc/passwd
+else
+    VNCARGS+=(-SecurityTypes None)
+fi
 
 # create init script
 echo -e "#!/bin/sh\nxrdb ~/.Xresources\nstartxfce4 &" > ~/.vnc/xstartup
@@ -19,5 +21,5 @@ touch ~/.Xauthority
 rm -rfv /tmp/.X*-lock /tmp/.X11-unix
 
 # start vncserver
-vncserver -alwaysshared -depth 24 -geometry "$VNCRESOLUTION"
+vncserver "${VNCARGS[@]}"
 tail -F ~/.vnc/*.log

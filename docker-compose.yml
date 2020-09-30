@@ -5,7 +5,7 @@ services:
         image: shiftinv/wine:vnc
         restart: 'no'
         environment:
-            # VNCPASSWD: '<unset>'
+            # VNCPASSWD: 'changeme'  # up to 8 characters
             VNCRESOLUTION: '1920x1080'
         ports:
             - '127.0.0.1:5901:5901'
