@@ -19,42 +19,46 @@ _IMAGE_PREFIX = shiftinv/wine
 
 all: build build-vnc build-dotnet build-dotnet-vnc
 
+
+# arg #1: image tags
+# arg #2: build args
+# arg #3: build context
+# arg #4: image prefix (optional)
 define _build_internal
 	docker build \
-		$(addprefix -t $(_IMAGE_PREFIX):, $(_TAGS)) \
-		$(addprefix --build-arg , $(_ARGS)) \
-		$(_BUILD_CONTEXT)
+		$(addprefix -t $(if $(4), $(4), $(_IMAGE_PREFIX)):, $(1)) \
+		$(addprefix --build-arg , $(2)) \
+		$(3)
 endef
 
 # shiftinv/wine : (<wine_branch>)?
-build: _BUILD_CONTEXT = .
-build: _DOCKERFILE = Dockerfile
-build: _TAGS = latest $(WINE_BRANCH)
-build: _ARGS = WINE_BRANCH=$(WINE_BRANCH)
 build:
-	$(call _build_internal)
+	$(call _build_internal, \
+		latest $(WINE_BRANCH), \
+		WINE_BRANCH=$(WINE_BRANCH), \
+		.)
 
 # shiftinv/wine : (<wine_branch>-)?vnc
-build-vnc: _BUILD_CONTEXT = vnc
-build-vnc: _TAGS = vnc $(WINE_BRANCH)-vnc
-build-vnc: _ARGS = BASE_IMAGE=$(_IMAGE_PREFIX):$(WINE_BRANCH)
 build-vnc: build
-	$(call _build_internal)
+	$(call _build_internal, \
+		vnc $(WINE_BRANCH)-vnc, \
+		BASE_IMAGE=$(_IMAGE_PREFIX):$(WINE_BRANCH), \
+		./vnc)
 
 # shiftinv/wine-dotnet : ((<wine_branch>-)?<dotnet_version>)?
-build-dotnet: _IMAGE_PREFIX := $(_IMAGE_PREFIX)-dotnet
-build-dotnet: _BUILD_CONTEXT = dotnet
-build-dotnet: _TAGS = latest $(DOTNET_VERSION) $(WINE_BRANCH)-$(DOTNET_VERSION)
-build-dotnet: _ARGS = DOTNET_VERSION=$(DOTNET_VERSION) BASE_TAG=$(WINE_BRANCH)
 build-dotnet: build
-	$(call _build_internal)
+	$(call _build_internal, \
+		latest $(DOTNET_VERSION) $(WINE_BRANCH)-$(DOTNET_VERSION), \
+		DOTNET_VERSION=$(DOTNET_VERSION) BASE_TAG=$(WINE_BRANCH), \
+		./dotnet, \
+		$(_IMAGE_PREFIX)-dotnet)
 
 # shiftinv/wine-dotnet : ((<wine_branch>-)?<dotnet_version>-)?vnc
-build-dotnet-vnc: _IMAGE_PREFIX := $(_IMAGE_PREFIX)-dotnet
-build-dotnet-vnc: _BUILD_CONTEXT = vnc
-build-dotnet-vnc: _TAGS = vnc $(DOTNET_VERSION)-vnc $(WINE_BRANCH)-$(DOTNET_VERSION)-vnc
-build-dotnet-vnc: _ARGS = BASE_IMAGE=$(_IMAGE_PREFIX):$(WINE_BRANCH)-$(DOTNET_VERSION)
 build-dotnet-vnc: build-dotnet
-	$(call _build_internal)
+	$(call _build_internal, \
+		vnc $(DOTNET_VERSION)-vnc $(WINE_BRANCH)-$(DOTNET_VERSION)-vnc, \
+		BASE_IMAGE=$(_IMAGE_PREFIX)-dotnet:$(WINE_BRANCH)-$(DOTNET_VERSION), \
+		./vnc, \
+		$(_IMAGE_PREFIX)-dotnet)
 
 .PHONY: all build build-vnc build-dotnet build-dotnet-vnc
