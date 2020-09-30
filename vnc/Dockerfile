@@ -26,6 +26,8 @@ RUN mkdir -p "$NOVNCHOME" "$NOVNCHOME/utils/websockify" \
  \
  # set resize mode to "Local Scaling" by default
  && sed -i "s/initSetting('resize', 'off')/initSetting('resize', 'scale')/" "$NOVNCHOME/app/ui.js" \
+ # disable bell sound by default
+ && sed -i "s/getConfigVar('bell', 'on')/getConfigVar('bell', 'off')/" "$NOVNCHOME/app/ui.js" \
  # automatically connect on load
  && sed -i "s/getConfigVar('autoconnect', false)/getConfigVar('autoconnect', true)/" "$NOVNCHOME/app/ui.js"
 
