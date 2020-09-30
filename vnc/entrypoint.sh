@@ -18,7 +18,7 @@ chmod +x ~/.vnc/xstartup
 
 # initialize session
 touch ~/.Xauthority
-rm -rfv /tmp/.X*-lock /tmp/.X11-unix
+rm -rfv /tmp/.X*-lock /tmp/.X11-unix || true
 
 # start vncserver
 vncserver "${VNCARGS[@]}"
